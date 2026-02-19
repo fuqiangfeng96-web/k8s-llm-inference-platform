@@ -1,0 +1,28 @@
+{
+  "config": {
+    "concurrency": 10,
+    "total_requests": 100,
+    "model": "qwen2.5-7b"
+  },
+  "summary": {
+    "total_requests": 100,
+    "successful": 100,
+    "failed": 0,
+    "total_time_seconds": 82.16,
+    "requests_per_second": 1.22
+  },
+  "latency_ms": {
+    "p50": 9148.8,
+    "p95": 9157.9,
+    "p99": 9159.1,
+    "avg": 7795.0
+  },
+  "ttft_ms": {
+    "p50": 105.4,
+    "p95": 107.0,
+    "avg": 104.6
+  },
+  "throughput": {
+    "avg_tokens_per_second": 28.0
+  }
+}
