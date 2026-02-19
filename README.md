@@ -140,11 +140,26 @@ curl http://<your-ip>:8000/v1/models
 kubectl port-forward -n monitoring svc/prometheus-grafana 3000:80
 ```
 
-## 📊 监控面板
+## 📊 性能测试
 
-![智算监控中心](智算监控中心.png)
+配套压测结果文档：[BENCHMARK_RESULTS.md](./BENCHMARK_RESULTS.md)
 
-配套监控面板项目：[k8s-llm-monitor](https://github.com/fuqiangfeng96-web/k8s-llm-monitor)
+![压测结果](智算监控中心.png)
+
+### 测试亮点
+
+- **吞吐量**: 26-30 tokens/s 稳定输出
+- **并发能力**: 最高支持 20 并发，QPS 达 2.34
+- **成功率**: 100% 零失败
+- **首 Token 延迟**: 低至 42ms
+
+### 压测配置
+
+| 配置 | 值 |
+|------|-----|
+| 模型 | Qwen2.5-7B-Instruct |
+| GPU | NVIDIA A10 (24GB) |
+| 推理框架 | vLLM |
 
 ## 🔔 告警规则
 
