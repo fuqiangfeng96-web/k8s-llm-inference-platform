@@ -1,0 +1,47 @@
+# helm/llm-inference/values.yaml
+# 所有可配置参数集中在这里
+
+replicaCount: 1
+
+image:
+  repository: crpi-wf5m7tzzfgz1jqx5.cn-chengdu.personal.cr.aliyuncs.com/fuqiangfeng/xwz96
+  tag: vllm-qwen-v1
+  pullPolicy: IfNotPresent
+
+model:
+  name: "Qwen/Qwen2.5-7B-Instruct"
+  servedName: "qwen2.5-7b"
+  maxModelLen: 4096
+  gpuMemoryUtilization: 0.9
+
+resources:
+  limits:
+    nvidia.com/gpu: 1
+    memory: "16Gi"
+    cpu: "4"
+  requests:
+    nvidia.com/gpu: 1
+    memory: "12Gi"
+    cpu: "2"
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: false
+  host: llm-api.your-domain.com
+
+persistence:
+  enabled: true
+  size: 50Gi
+  storageClass: local-path
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilization: 80
+
+monitoring:
+  enabled: true  # 第3周加监控时用
