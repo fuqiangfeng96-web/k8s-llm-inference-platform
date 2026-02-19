@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-inference
+  namespace: llm-serving
+  labels:
+    app: vllm-inference
+spec:
+  replicas: 1  # GPU贵，先1个副本
+  selector:
+    matchLabels:
+      app: vllm-inference
+  template:
+    metadata:
+      labels:
+        app: vllm-inference
+    spec:
+      containers:
+        - name: vllm
+          image: crpi-wf5m7tzzfgz1jqx5.cn-chengdu.personal.cr.aliyuncs.com/fuqiangfeng/xwz96:vllm-qwen-v1  # 换成你的镜像
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: vllm-config
+          resources:
+            limits:
+              nvidia.com/gpu: 1  # 请求1块GPU
+              memory: "16Gi"
+              cpu: "4"
+            requests:
+              nvidia.com/gpu: 1
+              memory: "12Gi"
+              cpu: "2"
+          volumeMounts:
+            - name: model-cache
+              mountPath: /root/.cache/huggingface  # vLLM默认模型缓存路径
+            - name: shm
+              mountPath: /dev/shm  # vLLM需要共享内存
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 120  # 模型加载需要时间
+            periodSeconds: 30
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            timeoutSeconds: 5
+      volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: model-cache
+        - name: shm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 8Gi
+      tolerations:  # 允许调度到GPU节点
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
